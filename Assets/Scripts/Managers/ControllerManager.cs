@@ -89,4 +89,8 @@ public class ControllerManager : MonoBehaviour
         return this.money >= cost;
     }
 
+    public int getUpgradeLevel() {
+        return this.upgradeLevel;
+    }
+
 }
