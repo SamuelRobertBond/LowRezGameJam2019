@@ -16,7 +16,11 @@ public class CaptureEntity : GameEntity
         base.Start();
         this.boardManager = FindObjectOfType<BoardManager>();
         this.unitQueue = new Queue<UnitSpawnInfo>();
-        this.owner.setCapturedEntity(this);
+
+        if (this.owner != null) {
+            this.owner.setCapturedEntity(this);
+        }
+
     }
 
     protected override void Act()
@@ -41,7 +45,9 @@ public class CaptureEntity : GameEntity
     }
 
     public void clearUnitQueue() {
-        unitQueue.Clear();
+        if (unitQueue != null) {
+            unitQueue.Clear();
+        }
     }
 
     public void changeDirection() {

@@ -19,12 +19,16 @@ public class BoardManager : MonoBehaviour
     private GameObject[,] boardTiles = new GameObject[GRID_SIZE, GRID_SIZE];
     private List<Vector3> gridPositions = new List<Vector3>();
 
-    public GameObject startingFlag2;
+    public AiControllerManager aiManager;
 
     private List<ControllerManager> controllers = new List<ControllerManager>();
 
     void InitControllers() {
+
         controllers.Add(FindObjectOfType<GameManager>().GetComponent<PlayerController>());
+        foreach (AiController aiController in aiManager.getControllers()) {
+            controllers.Add(aiController);
+        }
     }
 
     void InitGrid() {
@@ -50,32 +54,42 @@ public class BoardManager : MonoBehaviour
         }
 
         // Generate Starting Flags
+
         // Corners
-        createCaptureEntity(controllers[0], new Vector3(0, 0, 0), Direction.RIGHT);
-        createCaptureEntity(controllers[0], new Vector3(GRID_SIZE - 1, 0, 0), Direction.UP);
-        createCaptureEntity(controllers[0], new Vector3(GRID_SIZE - 1, GRID_SIZE - 1, 0), Direction.LEFT);
-        createCaptureEntity(controllers[0], new Vector3(0, GRID_SIZE - 1, 0), Direction.DOWN);
+        createCaptureEntity(new Vector3(0, 0, 0), Direction.RIGHT, controllers[0]);
+        createCaptureEntity(new Vector3(GRID_SIZE - 1, 0, 0), Direction.UP, controllers[1]);
+        //createCaptureEntity(new Vector3(GRID_SIZE - 1, GRID_SIZE - 1, 0), Direction.LEFT, controllers[2]);
+        //createCaptureEntity(new Vector3(0, GRID_SIZE - 1, 0), Direction.DOWN, controllers[3]);
 
-
-        createCaptureEntity(controllers[0], new Vector3(GRID_SIZE / 2, 0, 0), Direction.RIGHT);
-        createCaptureEntity(controllers[0], new Vector3(GRID_SIZE - 1, GRID_SIZE / 2, 0), Direction.UP);
-        createCaptureEntity(controllers[0], new Vector3(GRID_SIZE / 2, GRID_SIZE - 1, 0), Direction.LEFT);
-        createCaptureEntity(controllers[0], new Vector3(0, GRID_SIZE / 2, 0), Direction.DOWN);
+        // Cross Sections
+        createCaptureEntity(new Vector3(GRID_SIZE / 2, 0, 0), Direction.RIGHT);
+        createCaptureEntity(new Vector3(GRID_SIZE - 1, GRID_SIZE / 2, 0), Direction.UP);
+        createCaptureEntity(new Vector3(GRID_SIZE / 2, GRID_SIZE - 1, 0), Direction.LEFT);
+        createCaptureEntity(new Vector3(0, GRID_SIZE / 2, 0), Direction.DOWN);
 
         // Center
-        createCaptureEntity(controllers[0], new Vector3(GRID_SIZE/2, GRID_SIZE/2, 0), Direction.RIGHT);
+        createCaptureEntity(new Vector3(GRID_SIZE/2, GRID_SIZE/2, 0), Direction.RIGHT);
 
         //PathfindingManager pf = GetComponent<PathfindingManager>();
         //pf.setGrid(boardTiles);
     }
 
-    public void createCaptureEntity(ControllerManager owner, Vector3 pos, Direction dir) {
+    public void createCaptureEntity(Vector3 pos, Direction dir)
+    {
+        this.createCaptureEntity(pos, dir, null);
+    }
+
+    public void createCaptureEntity(Vector3 pos, Direction dir, ControllerManager owner) {
 
         GameObject captureEntityObj = Instantiate(capturePoint, pos * TILE_SCALE, Quaternion.identity) as GameObject;
         CaptureEntity entity = captureEntityObj.GetComponent<CaptureEntity>();
 
-        entity.owner = owner;
         entity.setDirection(dir);
+
+        if (owner != null) {
+            owner.setCapturedEntity(entity);          
+        }
+
     }
 
     public void step()
@@ -90,7 +104,9 @@ public class BoardManager : MonoBehaviour
             e.step(this);
         }
 
-        // Death Check
+        aiManager.step();
+
+        // Unit Death Check
         Debug.Log("Death Check");
         for (int i = 0; i < entities.Length; ++i)
         {

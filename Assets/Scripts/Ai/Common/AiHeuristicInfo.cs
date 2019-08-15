@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AiHeuristicInfo : MonoBehaviour
+public class AiHeuristicInfo
 {
     public LinkedList<GameUnitEntity> srcUnits;
     public LinkedList<GameUnitEntity> queuedUnits;

@@ -11,7 +11,7 @@ public abstract class AiDecisionManager : MonoBehaviour
 
     protected AiController aiController;
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         this.aiController = this.GetComponent<AiController>();
     }
@@ -40,7 +40,7 @@ public abstract class AiDecisionManager : MonoBehaviour
         foreach (MoveInfo moveInfo in movesInfo) {
 
             if (decisions.Count >= decisionLimit) { break; } // Limit on decisions
-
+            Debug.Log(moveInfo);
             decisions.Enqueue(makeDecision(moveInfo.move));
         }
 
@@ -64,6 +64,7 @@ public abstract class AiDecisionManager : MonoBehaviour
                 // Preform Raycast
                 c.boxCollider.enabled = false;
                 RaycastHit2D[] hits = Physics2D.LinecastAll(c.rb2D.position, end, LayerMask.GetMask("Blocking")); //Physics2D.Linecast
+                Debug.DrawLine(c.rb2D.position, end, Color.red, .5f);
                 c.boxCollider.enabled = true;
 
 
@@ -88,7 +89,7 @@ public abstract class AiDecisionManager : MonoBehaviour
                             moveInfo.enemyUnits.AddLast(gameUnitEntity);
                         }
 
-                    } else if (captureEntity != null) {
+                    } else if (captureEntity != null && captureEntity != c) {
                         // Enemy Capture Points
                         moveInfo.target = captureEntity;
                     }

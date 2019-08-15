@@ -5,7 +5,7 @@ using UnityEngine;
 public class ControllerManager : MonoBehaviour
 {
 
-    public int money = 600;
+    public int money = 5;
     public int income = 5;
 
     private int upgradeLevel = 1;
@@ -16,11 +16,11 @@ public class ControllerManager : MonoBehaviour
     protected CaptureEntity selectedCaptureEntity;
     public List<CaptureEntity> capturedEntities;
 
-    private UnitManager unitManager;
-    private BoardManager boardManager;
+    protected UnitManager unitManager;
+    protected BoardManager boardManager;
 
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         this.capturedEntities = new List<CaptureEntity>();
         boardManager = FindObjectOfType<BoardManager>();
@@ -40,7 +40,7 @@ public class ControllerManager : MonoBehaviour
         captureEntity.clearUnitQueue();
         this.capturedEntities.Add(captureEntity);
 
-        if (selectedCaptureEntity) {
+        if (selectedCaptureEntity == null) {
             selectedCaptureEntity = captureEntity;
         }
 

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AgressiveAiController : AiDecisionManager
+public class AggressiveAiDecisionManager : AiDecisionManager
 {
-    private UnitManager unitManager;
+    protected UnitManager unitManager;
 
-    private void Start()
+    protected override void Awake()
     {
+        base.Awake();
         unitManager = FindObjectOfType<UnitManager>();
     }
 
@@ -21,6 +22,10 @@ public class AgressiveAiController : AiDecisionManager
         // If flag is owned already half score
         if (info.target.owner == info.src.owner) {
             score /= 2; // Half Score if flag is already owned
+        }
+
+        if (info.target == null) {
+            score *= 2;
         }
 
         score += enemyScore - unitScore;
